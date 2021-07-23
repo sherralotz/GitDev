@@ -1,14 +1,31 @@
 $(document).ready( function () {
-    getGitJSONData();
-} ); 
+    getGithubJSONData();
+}); 
 
-function getGitJSONData(){  
+function getGithubJSONData(){  
     getJSON("https://api.github.com/repositories/19438/commits").then(response => { 
-        $('#table_id').DataTable({
-            data: response, 
+        const dataSource = response.map((dataItem) =>{
+            const { commit } = dataItem;
+            return [ commit.author.name, 
+                commit.author.date, 
+               commit.message, 
+               commit.url ];
+        });
+        $('#git-table').DataTable({
+            data: dataSource, 
             columns: [
-                { data: "sha", title: "Column1" },
-                { data: "url", title: "Column2" },
+                { title: "Authors Name", width: "20%" },
+                { title: "Author Commit Date", width: "25%", type: "date",
+                    render: function(data) {
+                        return formatDate(data);
+                    }
+                }, 
+                { title: "Message", width: "40%", orderable: false  }, 
+                { title: "Commit URL", orderable: false,
+                    render: function(data) {
+                        return `<a href="${data}" title="${data}" target="_blank">Visit</a>`;
+                    }
+                }, 
             ]
         }); 
     });
@@ -18,5 +35,9 @@ function getGitJSONData(){
 async function getJSON(url){
     response = await fetch(url);
     return response.json();
+}
+
+function formatDate(date) {
+    return (new Date(date).toDateString()) + " " + (new Date().toLocaleTimeString());  
 }
  
