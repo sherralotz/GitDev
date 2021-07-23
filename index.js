@@ -38,6 +38,6 @@ async function getJSON(url){
 }
 
 function formatDate(date) {
-    return (new Date(date).toDateString()) + " " + (new Date().toLocaleTimeString());  
+    return (new Date(date).toDateString()) + " " + (new Date(date).toLocaleTimeString());  
 }
  
